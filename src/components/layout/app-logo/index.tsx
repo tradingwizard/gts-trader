@@ -9,7 +9,7 @@ import './app-logo.scss';
 
 export const AppLogo = () => {
     return (
-        <a href='/' className='app-header__logo' aria-label={localize('Home')}>
+        <a href='https://gtstrader.app' className='app-header__logo' aria-label={localize('Home')}>
             <LogoMark height={32} />
         </a>
     );
