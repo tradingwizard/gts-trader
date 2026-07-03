@@ -16,6 +16,7 @@ import './app-root.scss';
 
 const Layout = lazy(() => import('../components/layout'));
 const Home = lazy(() => import('../pages/home'));
+const AnalysisTool = lazy(() => import('../pages/analysis-tool'));
 const AppRoot = lazy(() => import('./app-root'));
 
 /**
@@ -57,6 +58,16 @@ const router = createBrowserRouter(
                         fallback={<ChunkLoader message={localize('Please wait while we connect to the server...')} />}
                     >
                         <Home />
+                    </Suspense>
+                }
+            />
+            <Route
+                path='/analysis-tool'
+                element={
+                    <Suspense
+                        fallback={<ChunkLoader message={localize('Please wait while we connect to the server...')} />}
+                    >
+                        <AnalysisTool />
                     </Suspense>
                 }
             />
