@@ -15,6 +15,7 @@ import i18nInstance from './i18n';
 import './app-root.scss';
 
 const Layout = lazy(() => import('../components/layout'));
+const Home = lazy(() => import('../pages/home'));
 const AppRoot = lazy(() => import('./app-root'));
 
 /**
@@ -31,34 +32,46 @@ const LanguageHandler = ({ children }: { children: React.ReactNode }) => {
 // partner deploys are served at the root, so no basename there.
 const routerBasename = isPreviewMode() ? PREVIEW_BASE_PATH : undefined;
 
+const AppProviders = ({ children }: { children: React.ReactNode }) => (
+    <Suspense fallback={<ChunkLoader message={localize('Please wait while we connect to the server...')} />}>
+        <TranslationProvider defaultLang='EN' i18nInstance={i18nInstance}>
+            <LanguageHandler>
+                <StoreProvider>
+                    <LocalStorageSyncWrapper>
+                        <RoutePromptDialog />
+                        <CoreStoreProvider>{children}</CoreStoreProvider>
+                    </LocalStorageSyncWrapper>
+                </StoreProvider>
+            </LanguageHandler>
+        </TranslationProvider>
+    </Suspense>
+);
+
 const router = createBrowserRouter(
     createRoutesFromElements(
-        <Route
-            path='/'
-            element={
-                <Suspense
-                    fallback={<ChunkLoader message={localize('Please wait while we connect to the server...')} />}
-                >
-                    <TranslationProvider defaultLang='EN' i18nInstance={i18nInstance}>
-                        <LanguageHandler>
-                            <StoreProvider>
-                                <LocalStorageSyncWrapper>
-                                    <RoutePromptDialog />
-                                    <CoreStoreProvider>
-                                        <Layout />
-                                    </CoreStoreProvider>
-                                </LocalStorageSyncWrapper>
-                            </StoreProvider>
-                        </LanguageHandler>
-                    </TranslationProvider>
-                </Suspense>
-            }
-        >
-            {/* All child routes will be passed as children to Layout */}
-            <Route index element={<AppRoot />} />
-            {/* App Builder embeds the template at /preview — render the same app shell */}
-            <Route path='preview' element={<AppRoot />} />
-        </Route>
+        <>
+            <Route
+                path='/'
+                element={
+                    <Suspense
+                        fallback={<ChunkLoader message={localize('Please wait while we connect to the server...')} />}
+                    >
+                        <Home />
+                    </Suspense>
+                }
+            />
+            <Route
+                element={
+                    <AppProviders>
+                        <Layout />
+                    </AppProviders>
+                }
+            >
+                <Route path='trade' element={<AppRoot />} />
+                {/* App Builder embeds the template at /preview - render the same app shell */}
+                <Route path='preview' element={<AppRoot />} />
+            </Route>
+        </>
     ),
     { basename: routerBasename }
 );
@@ -100,6 +113,10 @@ function App() {
 
                     const { api_base } = await import('@/external/bot-skeleton');
                     await api_base.init(true);
+
+                    if (window.location.pathname !== `${routerBasename ?? ''}/trade`) {
+                        await router.navigate('/trade', { replace: true });
+                    }
                 } else {
                     console.error('No accounts returned after authentication');
                 }
