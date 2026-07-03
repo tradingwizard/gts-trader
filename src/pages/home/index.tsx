@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import IntroSplash from '@/components/intro-splash/intro-splash';
+import IntroSplash from '../../components/intro-splash/intro-splash';
 import heroLightbulb from './assets/hero-trading.png';
 import featureBulbChart from './assets/feature-chart.png';
 import sectionDesk from './assets/section-desk.png';
