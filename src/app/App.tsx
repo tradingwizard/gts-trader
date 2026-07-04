@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import React from 'react';
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider } from 'react-router-dom';
 import { cleanupUrl, handleOAuthCallback } from '@/external/deriv-core';
 import ChunkLoader from '@/components/loader/chunk-loader';
 import LocalStorageSyncWrapper from '@/components/localStorage-sync-wrapper';
@@ -16,7 +16,6 @@ import './app-root.scss';
 
 const Layout = lazy(() => import('../components/layout'));
 const Home = lazy(() => import('../pages/home'));
-const AnalysisTool = lazy(() => import('../pages/analysis-tool'));
 const AppRoot = lazy(() => import('./app-root'));
 
 /**
@@ -63,13 +62,7 @@ const router = createBrowserRouter(
             />
             <Route
                 path='/analysis-tool'
-                element={
-                    <Suspense
-                        fallback={<ChunkLoader message={localize('Please wait while we connect to the server...')} />}
-                    >
-                        <AnalysisTool />
-                    </Suspense>
-                }
+                element={<Navigate to='/trade#analysis_tool' replace />}
             />
             <Route
                 element={

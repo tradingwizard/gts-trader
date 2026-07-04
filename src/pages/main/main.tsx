@@ -46,6 +46,7 @@ import './main.scss';
 
 const ChartWrapper = lazy(() => import('../chart/chart-wrapper'));
 const Tutorial = lazy(() => import('../tutorials'));
+const AnalysisTool = lazy(() => import('../analysis-tool'));
 
 const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
@@ -78,7 +79,7 @@ const AppWrapper = observer(() => {
     const { clear } = summary_card;
     const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
     const init_render = React.useRef(true);
-    const hash = ['dashboard', 'bot_builder', 'chart', 'tutorial'];
+    const hash = ['dashboard', 'bot_builder', 'chart', 'tutorial', 'analysis_tool'];
     const { isDesktop } = useDevice();
     const location = useLocation();
     const navigate = useNavigate();
@@ -144,7 +145,7 @@ const AppWrapper = observer(() => {
 
     React.useEffect(() => {
         const el_dashboard = document.getElementById('id-dbot-dashboard');
-        const el_tutorial = document.getElementById('id-tutorials');
+        const el_analysis_tool = document.getElementById('id-analysis-tool');
 
         const observer_dashboard = new window.IntersectionObserver(
             ([entry]) => {
@@ -160,7 +161,7 @@ const AppWrapper = observer(() => {
             }
         );
 
-        const observer_tutorial = new window.IntersectionObserver(
+        const observer_analysis_tool = new window.IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
                     setRightTabShadow(false);
@@ -174,7 +175,7 @@ const AppWrapper = observer(() => {
             }
         );
         observer_dashboard.observe(el_dashboard);
-        observer_tutorial.observe(el_tutorial);
+        observer_analysis_tool.observe(el_analysis_tool);
     });
 
     React.useEffect(() => {
@@ -451,6 +452,27 @@ const AppWrapper = observer(() => {
                                         <Tutorial handleTabChange={handleTabChange} />
                                     </Suspense>
                                 </div>
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <LabelPairedChartLineCaptionRegularIcon
+                                            height='24px'
+                                            width='24px'
+                                            fill='var(--text-general)'
+                                        />
+                                        <Localize i18n_default_text='Analysis Tool' />
+                                    </>
+                                }
+                                id='id-analysis-tool'
+                            >
+                                <Suspense
+                                    fallback={
+                                        <ChunkLoader message={localize('Please wait, loading analysis tool...')} />
+                                    }
+                                >
+                                    <AnalysisTool />
+                                </Suspense>
                             </div>
                         </Tabs>
                         {!isDesktop && right_tab_shadow && <span className='tabs-shadow tabs-shadow--right' />}{' '}
